@@ -2,6 +2,7 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignoreBinaries": ["grype"],
   "ignore": [".trunk/**"],
+  "ignoreDependencies": ["stylelint-config-standard"],
   "workspaces": {
     ".": {
       "entry": ["stylelint.config.mjs", "e2e/**/*.ts"],
@@ -11,8 +12,9 @@
       "project": ["src/**/*.ts"]
     },
     "packages/workshop-web": {
-      "entry": ["src/server.ts", "src/main.tsx"],
-      "project": ["src/**/*.{ts,tsx}"]
+      "entry": ["src/server.ts", "src/styles.css"],
+      "project": ["src/**/*.{ts,tsx,css}"],
+      "ignoreDependencies": ["tailwindcss"]
     }
   }
 }

@@ -12,13 +12,13 @@ export type Session = {
   workspaceId: string;
 };
 
-export type MintConnectorInput = {
+type MintConnectorInput = {
   ambient: boolean;
   name: string;
   vendor: string;
 };
 
-export type ConnectorInvoke = Connector & { secret: string | null };
+type ConnectorInvoke = Connector & { secret: string | null };
 
 type CoreStore = {
   accept: (session: Session, chatId: string) => Promise<string>;

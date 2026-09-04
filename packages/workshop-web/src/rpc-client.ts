@@ -4,8 +4,6 @@ import { apiBase } from './api';
 
 import type { PublicRpc } from './gaos-api';
 
-export type { AuthedRpc, Connector, PublicRpc, WorkshopState } from './gaos-api';
-
 export function rpcWsUrl(): string {
   return `${apiBase().replace(/^http/u, 'ws')}/rpc`;
 }

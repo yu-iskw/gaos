@@ -7,7 +7,7 @@ function isThemeMode(value: string | null): value is ThemeMode {
   return value === 'light' || value === 'dark' || value === 'system';
 }
 
-export function getSystemThemeMode(): ResolvedThemeMode {
+function getSystemThemeMode(): ResolvedThemeMode {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
@@ -39,5 +39,3 @@ export function applyThemeMode(mode: ThemeMode): ResolvedThemeMode {
   root.style.colorScheme = resolved;
   return resolved;
 }
-
-export const DEFAULT_ACCENT_COLOR = '#ff4801';

@@ -5,7 +5,7 @@ import { invokeMcp } from './mcp-invoke';
 import type { Session, Store } from './store';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
-export type ExtraHttpConfig = {
+type ExtraHttpConfig = {
   agentUrl: string;
   internalToken: string;
   store: Store;

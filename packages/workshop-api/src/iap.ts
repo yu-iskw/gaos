@@ -29,7 +29,7 @@ function jwtPart(parts: string[], index: number): string {
   return part;
 }
 
-export async function verifyIapJwt(token: string, audience: string): Promise<void> {
+async function verifyIapJwt(token: string, audience: string): Promise<void> {
   const parts = token.split('.');
   if (parts.length !== 3) {
     throw new Error('unauthorized');

@@ -3,8 +3,8 @@ import { createContext, useContext } from 'react';
 import type { AuthedRpc } from './gaos-api';
 import type { ReactNode } from 'react';
 
-export const TOKEN_KEY = 'gaos.auth.token';
-export const CHAT_KEY = 'gaos.auth.chatId';
+const TOKEN_KEY = 'gaos.auth.token';
+const CHAT_KEY = 'gaos.auth.chatId';
 
 export type AuthSession = {
   chatId: string;

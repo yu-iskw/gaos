@@ -2,7 +2,7 @@ type AgentTurnResult = {
   text: string;
 };
 
-export type AgentTurnOptions = {
+type AgentTurnOptions = {
   agentUrl: string;
   chatId: string;
   internalToken: string;
