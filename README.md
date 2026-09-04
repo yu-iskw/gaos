@@ -16,7 +16,7 @@ Docker Engine. Compose builds the stack. The local gadget sandbox talks to the h
 docker compose up -d --build --wait
 ```
 
-Open [http://127.0.0.1:5173](http://127.0.0.1:5173). Chat uses the fixture agent (`GAOS_MODEL=fixture`), not a live model.
+Open `http://127.0.0.1:5173`. Chat uses the fixture agent (`GAOS_MODEL=fixture`), not a live model.
 
 Stop the stack with `docker compose down`. Add `-v` to drop Postgres data.
 
@@ -30,7 +30,7 @@ gcloud auth application-default set-quota-project ubie-yu-sandbox
 docker compose -f compose.yaml -f compose.vertex.yaml up -d --build --wait
 ```
 
-Open [http://127.0.0.1:5173](http://127.0.0.1:5173). Sign up, send a message. The agent host calls Gemini on Vertex (`GAOS_MODEL=google-vertex/gemini-2.5-flash`). Default `docker compose up` stays on the fixture so e2e does not need Vertex.
+Open `http://127.0.0.1:5173`. Sign up, send a message. The agent host calls Gemini on Vertex (`GAOS_MODEL=google-vertex/gemini-2.5-flash`). Default `docker compose up` stays on the fixture so e2e does not need Vertex.
 
 ### Test against compose
 

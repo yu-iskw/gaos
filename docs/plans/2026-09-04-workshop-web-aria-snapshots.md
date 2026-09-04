@@ -5,7 +5,7 @@ date: 2026-09-04
 execution: knowledge-work
 ---
 
-# workshop-web Aria Snapshots - Plan
+## workshop-web Aria Snapshots - Plan
 
 Created: 2026-09-04
 

@@ -8,7 +8,7 @@ type PageScenario = {
   name: string;
   auth: 'guest' | 'authed';
   path: string;
-  act?: (page: Page) => Promise<void>;
+  act?: (_page: Page) => Promise<void>;
   wait: Wait;
 };
 
