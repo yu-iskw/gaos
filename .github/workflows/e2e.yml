@@ -61,6 +61,12 @@ jobs:
       - name: Pull sandbox image
         run: docker pull node:22-slim
 
+      - name: Prepare gadget socket root
+        run: |
+          mkdir -p /tmp/gaos-gadgets
+          # workshop-api runs as uid 1001 (Dockerfile USER) against this bind mount
+          sudo chown 1001:1001 /tmp/gaos-gadgets
+
       - name: Start compose
         run: docker compose up -d --build --wait
 
