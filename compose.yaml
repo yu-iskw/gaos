@@ -17,6 +17,9 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    # Bind-mounted gadget sockets + docker.sock need root on the compose host path.
+    # Image still declares USER gaos for production/Trivy; this overrides runtime only.
+    user: '0:0'
     command: ['node', 'packages/workshop-api/dist/server.js']
     depends_on:
       postgres:

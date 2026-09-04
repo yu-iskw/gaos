@@ -15,8 +15,8 @@ FROM node:22-slim
 WORKDIR /app
 COPY --from=build /app /app
 ENV NODE_ENV=production
-RUN groupadd --system --gid 1001 gaos \
-  && useradd --system --uid 1001 --gid gaos --create-home gaos \
+RUN groupadd --gid 1001 gaos \
+  && useradd --uid 1001 --gid gaos --create-home gaos \
   && chown -R gaos:gaos /app
 USER gaos
 EXPOSE 8080
