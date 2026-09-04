@@ -37,6 +37,14 @@ const importXSettings = {
   },
 };
 
+/** Noisy eslint-plugin-security rules; real security signal stays in Trivy/OSV. */
+const securityRulesQuiet = {
+  ...securityRecommended.rules,
+  'security/detect-object-injection': 'off',
+  'security/detect-non-literal-fs-filename': 'off',
+  'security/detect-possible-timing-attacks': 'off',
+};
+
 const importXRules = {
   ...importXFlatConfigs.recommended.rules,
   ...importXFlatConfigs.typescript.rules,
@@ -49,6 +57,8 @@ const importXRules = {
     },
   ],
   'import-x/no-cycle': ['error', { maxDepth: 3 }],
+  // Workspace packages resolve via package.json "types" → src; tolerate unbuilt dist.
+  'import-x/no-unresolved': ['error', { ignore: ['^@gaos/'] }],
 };
 
 /**
@@ -131,7 +141,7 @@ export default [
     settings: importXSettings,
     rules: {
       ...importXRules,
-      ...securityRecommended.rules,
+      ...securityRulesQuiet,
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'no-new-func': 'error',
@@ -160,7 +170,7 @@ export default [
     settings: importXSettings,
     rules: {
       ...importXRules,
-      ...securityRecommended.rules,
+      ...securityRulesQuiet,
       ...sharedTsRules,
       '@typescript-eslint/no-unused-private-class-members': 'error',
       'unicorn/filename-case': unicornFilenameCase,
@@ -188,13 +198,36 @@ export default [
     settings: importXSettings,
     rules: {
       ...importXRules,
-      ...securityRecommended.rules,
+      ...securityRulesQuiet,
       ...sharedTsRules,
       ...vitestPlugin.configs.recommended.rules,
       // Tests often repeat string literals and use conditional expects; keep signal without noise.
       'vitest/no-conditional-expect': 'off',
       'sonarjs/no-duplicate-string': 'off',
       'max-lines-per-function': ['error', { max: 700 }],
+      'unicorn/filename-case': unicornFilenameCase,
+    },
+  },
+  {
+    // Root e2e / Playwright / Vitest e2e configs — light rules so Trunk does not
+    // report "File ignored because no matching configuration".
+    files: ['e2e/**/*.ts', 'playwright.config.ts', 'vitest.e2e.config.ts'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      },
+    },
+    plugins: {
+      ...importXPlugins,
+      unicorn,
+    },
+    settings: importXSettings,
+    rules: {
+      ...importXRules,
+      'prefer-const': 'error',
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'unicorn/filename-case': unicornFilenameCase,
     },
   },
@@ -219,7 +252,7 @@ export default [
       ...securityRecommended.plugins,
     },
     rules: {
-      ...securityRecommended.rules,
+      ...securityRulesQuiet,
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     },
   },

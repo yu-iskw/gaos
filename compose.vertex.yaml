@@ -1,0 +1,11 @@
+services:
+  agent-host:
+    environment:
+      GAOS_MODEL: google-vertex/gemini-2.5-flash
+      GOOGLE_VERTEX_PROJECT: ${GOOGLE_VERTEX_PROJECT:-ubie-yu-sandbox}
+      GOOGLE_VERTEX_LOCATION: ${GOOGLE_VERTEX_LOCATION:-global}
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_VERTEX_PROJECT:-ubie-yu-sandbox}
+      GOOGLE_CLOUD_QUOTA_PROJECT: ${GOOGLE_VERTEX_PROJECT:-ubie-yu-sandbox}
+      GOOGLE_APPLICATION_CREDENTIALS: /gcp/adc.json
+    volumes:
+      - ${HOME}/.config/gcloud/application_default_credentials.json:/gcp/adc.json:ro

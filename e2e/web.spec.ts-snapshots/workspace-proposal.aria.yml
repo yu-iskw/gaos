@@ -1,0 +1,24 @@
+- banner:
+    - link "gaos":
+        - /url: /
+        - img
+    - text: /
+    - heading "gaos" [level=1]
+    - paragraph: signed in
+- complementary:
+    - paragraph: write a gadget
+    - paragraph: Proposed a gadget with client.js and server.js.
+    - paragraph: Pending changes
+    - list:
+        - listitem: client.js
+        - listitem: server.js
+    - button "Revert"
+    - button "Accept"
+    - textbox "message"
+    - paragraph: signed in
+    - button "Send"
+- button "Preview"
+- button "Code"
+- button "Connections"
+- button "Workspaces"
+- iframe

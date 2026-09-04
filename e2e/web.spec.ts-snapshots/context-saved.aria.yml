@@ -1,0 +1,53 @@
+- complementary "Primary":
+    - link "gaos":
+        - /url: /
+        - img
+        - text: ''
+    - button "Search":
+        - img
+    - button "Collapse sidebar":
+        - img
+    - navigation:
+        - link "Home":
+            - /url: /
+            - img
+            - text: ''
+        - link "Workspaces":
+            - /url: /workspaces
+            - img
+            - text: ''
+        - link "Blueprints":
+            - /url: /blueprints
+            - img
+            - text: ''
+        - link "Outputs":
+            - /url: /outputs
+            - img
+            - text: ''
+        - link "Context":
+            - /url: /context
+            - img
+            - text: ''
+        - link "Explore":
+            - /url: /explore
+            - img
+            - text: ''
+    - link "Connectors":
+        - /url: /gatekeepers
+        - img
+    - 'button "Theme: system (light). Switch to light."':
+        - img
+    - link "Profile":
+        - /url: /profile
+    - link "Admin":
+        - /url: /admin
+    - button "Sign out"
+- paragraph: signed in
+- heading "Context" [level=1]
+- textbox "title"
+- textbox "body"
+- button "Save document"
+- list:
+    - listitem:
+        - paragraph: note
+        - paragraph: hello

@@ -12,13 +12,13 @@ Treat this file as the **canonical** description of how to work in this reposito
 
 ## Project overview
 
-Production-ready **TypeScript monorepo** template:
+**gaos** is a workshop for private apps: a person chats, an agent writes a gadget, the gadget runs with no ambient network. The workshop kernel (`@gaos/workshop-api`) is not Mastra. The agent loop (`@gaos/agent-host`) is Mastra in a separate process. Isolation goes through `@gaos/sandbox`. Local proof is `docker compose` plus `pnpm test:e2e`.
 
 - **Package manager:** pnpm (workspace); see **pnpm workspace** below
 - **Runtime:** Node.js (see `.node-version`)
 - **Build:** tsc / pnpm scripts
 - **Lint / format:** Trunk (ESLint, Prettier, and more)
-- **Tests:** Vitest
+- **Tests:** Vitest (`pnpm test` unit, `pnpm test:e2e:smoke` / `pnpm test:e2e` against compose)
 - **CI/CD:** `.github/workflows/`
 
 ## Quick commands

@@ -1,0 +1,54 @@
+- complementary "Primary":
+    - link "gaos":
+        - /url: /
+        - img
+        - text: ''
+    - button "Search":
+        - img
+    - button "Collapse sidebar":
+        - img
+    - navigation:
+        - link "Home":
+            - /url: /
+            - img
+            - text: ''
+        - link "Workspaces":
+            - /url: /workspaces
+            - img
+            - text: ''
+        - link "Blueprints":
+            - /url: /blueprints
+            - img
+            - text: ''
+        - link "Outputs":
+            - /url: /outputs
+            - img
+            - text: ''
+        - link "Context":
+            - /url: /context
+            - img
+            - text: ''
+        - link "Explore":
+            - /url: /explore
+            - img
+            - text: ''
+    - link "Connectors":
+        - /url: /gatekeepers
+        - img
+    - 'button "Theme: system (light). Switch to light."':
+        - img
+    - link "Profile":
+        - /url: /profile
+    - link "Admin":
+        - /url: /admin
+    - button "Sign out"
+- paragraph: signed in
+- heading "Admin" [level=1]
+- textbox "site name": gaos
+- textbox "accent": '#ff4801'
+- button "Save"
+- heading "Schedules" [level=2]
+- textbox: 0 9 * * *
+- textbox: scheduled turn
+- button "Create schedule"
+- list

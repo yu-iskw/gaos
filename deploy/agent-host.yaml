@@ -1,0 +1,25 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: gaos-agent-host
+spec:
+  template:
+    spec:
+      timeoutSeconds: 3600
+      containers:
+        - name: agent-host
+          image: IMAGE
+          ports:
+            - containerPort: 8081
+          env:
+            - name: PORT
+              value: '8081'
+            - name: WORKSHOP_URL
+              value: https://gaos-workshop-api
+            - name: INTERNAL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: INTERNAL_TOKEN
+                  key: latest
+            - name: GAOS_MODEL
+              value: google/gemini-2.5-flash

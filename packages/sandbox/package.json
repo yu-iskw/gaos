@@ -1,0 +1,24 @@
+{
+  "name": "@gaos/sandbox",
+  "version": "1.0.0",
+  "description": "Isolation port for untrusted gadget and agent code.",
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
+  "bin": {
+    "gaos-sandbox": "./dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "dockerode": "^4.0.9"
+  },
+  "devDependencies": {
+    "@types/dockerode": "^3.3.44",
+    "@types/node": "^22.18.0",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,13 @@
+- img
+- heading "gaos" [level=1]
+- paragraph: Sign in to your account
+- text: Email
+- textbox "email"
+- text: Password
+- textbox "password"
+- button "Sign up"
+- button "Sign in"
+- paragraph:
+    - text: Don't have an account?
+    - link "Create one":
+        - /url: /signup
