@@ -19,7 +19,7 @@ async function signUp(page: Page): Promise<{ email: string; password: string }> 
   await page.getByRole('textbox', { name: 'email' }).fill(email);
   await page.getByRole('textbox', { name: 'password' }).fill(PASSWORD);
   await page.getByRole('button', { name: 'Sign up' }).click();
-  await expect(page.getByText('signed in').filter({ visible: true })).toBeVisible();
+  await expect(page.locator('#status')).toHaveText('signed in');
   return { email, password: PASSWORD };
 }
 
@@ -85,7 +85,7 @@ const SCENARIOS: PageScenario[] = [
       await page.getByRole('textbox', { name: 'email' }).fill(creds.email);
       await page.getByRole('textbox', { name: 'password' }).fill(creds.password);
       await page.getByRole('button', { name: 'Sign in' }).click();
-      await expect(page.getByText('signed in').filter({ visible: true })).toBeVisible();
+      await expect(page.locator('#status')).toHaveText('signed in');
     },
     wait: { kind: 'role', role: 'button', name: 'Send' },
   },
