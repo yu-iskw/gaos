@@ -43,7 +43,14 @@
         - /url: /admin
     - button "Sign out"
 - paragraph: signed in
-- heading "gaos" [level=1]
-- paragraph: What should we make?
-- textbox "message"
-- button "Send"
+- banner:
+    - heading "Workspaces" [level=1]
+    - paragraph: Each chat is a conversation in your workshop.
+    - link "Create workspace":
+        - /url: /
+        - img
+        - text: ''
+- list:
+    - listitem:
+        - link "Chat 1":
+            - /url: /\/workspace\/me\?chat=[0-9a-f-]{36}/

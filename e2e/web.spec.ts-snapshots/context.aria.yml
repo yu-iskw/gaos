@@ -43,7 +43,8 @@
         - /url: /admin
     - button "Sign out"
 - paragraph: signed in
-- heading "gaos" [level=1]
-- paragraph: What should we make?
-- textbox "message"
-- button "Send"
+- heading "Context" [level=1]
+- textbox "title"
+- textbox "body"
+- button "Save document"
+- list

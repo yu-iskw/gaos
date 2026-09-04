@@ -1,0 +1,16 @@
+- banner:
+    - link "gaos":
+        - /url: /
+        - img
+    - text: /
+    - heading "gaos" [level=1]
+    - paragraph: signed in
+- complementary:
+    - textbox "message"
+    - paragraph: signed in
+    - button "Send"
+- button "Preview"
+- button "Code"
+- button "Connections"
+- button "Workspaces"
+- paragraph: No gadget yet. Send a message.

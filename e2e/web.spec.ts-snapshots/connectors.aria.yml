@@ -43,7 +43,11 @@
         - /url: /admin
     - button "Sign out"
 - paragraph: signed in
-- heading "gaos" [level=1]
-- paragraph: What should we make?
-- textbox "message"
-- button "Send"
+- heading "Connectors" [level=1]
+- paragraph: Mint a named connector. Ambient grants need an allowlist. MCP uses the name as the server URL.
+- textbox "vendor": mcp
+- textbox "name"
+- checkbox "ambient"
+- text: ambient
+- button "Mint"
+- list

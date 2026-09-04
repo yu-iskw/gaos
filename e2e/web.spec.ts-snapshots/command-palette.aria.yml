@@ -47,3 +47,28 @@
 - paragraph: What should we make?
 - textbox "message"
 - button "Send"
+- dialog:
+    - textbox "Search":
+        - /placeholder: Go to…
+    - list:
+        - listitem:
+            - button "Home"
+        - listitem:
+            - button "Workspaces"
+        - listitem:
+            - button "Blueprints"
+        - listitem:
+            - button "Outputs"
+        - listitem:
+            - button "Explore"
+        - listitem:
+            - button "Connectors"
+        - listitem:
+            - button "Context"
+        - listitem:
+            - button "Profile"
+        - listitem:
+            - button "Providers"
+        - listitem:
+            - button "Admin"
+    - button "Close"

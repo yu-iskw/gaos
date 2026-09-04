@@ -43,7 +43,5 @@
         - /url: /admin
     - button "Sign out"
 - paragraph: signed in
-- heading "gaos" [level=1]
-- paragraph: What should we make?
-- textbox "message"
-- button "Send"
+- heading "Providers" [level=1]
+- paragraph: Password sign-in is enabled. IAP is off in this deployment.

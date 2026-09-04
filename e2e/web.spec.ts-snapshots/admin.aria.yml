@@ -43,7 +43,12 @@
         - /url: /admin
     - button "Sign out"
 - paragraph: signed in
-- heading "gaos" [level=1]
-- paragraph: What should we make?
-- textbox "message"
-- button "Send"
+- heading "Admin" [level=1]
+- textbox "site name": gaos
+- textbox "accent": '#ff4801'
+- button "Save"
+- heading "Schedules" [level=2]
+- textbox: 0 9 * * *
+- textbox: scheduled turn
+- button "Create schedule"
+- list

@@ -43,7 +43,6 @@
         - /url: /admin
     - button "Sign out"
 - paragraph: signed in
-- heading "gaos" [level=1]
-- paragraph: What should we make?
-- textbox "message"
-- button "Send"
+- img
+- paragraph: Blueprints
+- paragraph: Blueprints are not in this workshop yet.
