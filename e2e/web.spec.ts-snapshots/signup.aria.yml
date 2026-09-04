@@ -1,0 +1,6 @@
+- heading "gaos" [level=1]
+- textbox "email"
+- textbox "password"
+- button "Sign up"
+- paragraph
+- iframe

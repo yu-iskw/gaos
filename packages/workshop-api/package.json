@@ -1,0 +1,27 @@
+{
+  "name": "@gaos/workshop-api",
+  "version": "1.0.0",
+  "description": "Workshop kernel. Chats, gadgets, proposals. Never imports @mastra/core.",
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "main": "dist/server.js",
+  "bin": {
+    "gaos-workshop-api": "./dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@gaos/sandbox": "workspace:*",
+    "capnweb": "^0.12.0",
+    "pg": "^8.16.3",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "@types/pg": "^8.15.5",
+    "@types/ws": "^8.18.1",
+    "typescript": "^5.9.3"
+  }
+}

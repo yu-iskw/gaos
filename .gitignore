@@ -138,7 +138,11 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-TODO.md
+e2e-results.xml
+dist-serve/
+playwright-report/
+test-results/
+
 .todo_list/
 
 # Claude Code

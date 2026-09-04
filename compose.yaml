@@ -1,0 +1,97 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: gaos
+      POSTGRES_PASSWORD: gaos
+      POSTGRES_DB: gaos
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U gaos -d gaos']
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  workshop-api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: ['node', 'packages/workshop-api/dist/server.js']
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://gaos:gaos@postgres:5432/gaos
+      AGENT_URL: http://agent-host:8081
+      INTERNAL_TOKEN: e2e-internal-token
+      PORT: '8080'
+      DOCKER_SOCKET: /var/run/docker.sock
+      GAOS_GADGET_SOCKET_ROOT: /tmp/gaos-gadgets
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/gaos-gadgets:/tmp/gaos-gadgets
+    ports:
+      - '8080:8080'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:8080/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  agent-host:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: ['node', 'packages/agent-host/dist/server.js']
+    environment:
+      WORKSHOP_URL: http://workshop-api:8080
+      INTERNAL_TOKEN: e2e-internal-token
+      GAOS_MODEL: fixture
+      PORT: '8081'
+    ports:
+      - '8081:8081'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:8081/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  workshop-web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: ['node', 'packages/workshop-web/dist-serve/server.js']
+    environment:
+      PORT: '5173'
+    ports:
+      - '5173:5173'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:5173/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+volumes:
+  postgres-data:

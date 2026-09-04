@@ -1,0 +1,20 @@
+{
+  "name": "@gaos/workshop-web",
+  "version": "1.0.0",
+  "description": "Workshop SPA. Iframes gadget client.js.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.serve.json",
+    "start": "node dist-serve/server.js",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "capnweb": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.16"
+  }
+}

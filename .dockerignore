@@ -1,0 +1,17 @@
+.git
+.github
+.claude
+.cursor
+.trunk
+.agents
+coverage
+**/node_modules
+**/dist
+**/dist-serve
+**/*.tsbuildinfo
+e2e-results.xml
+README.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.codeql_db

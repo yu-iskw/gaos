@@ -1,8 +1,8 @@
 {
-  "name": "typescript-template",
+  "name": "gaos",
   "version": "1.0.0",
   "private": true,
-  "description": "",
+  "description": "Thin workshop kernel, Mastra agent host, and sandbox port.",
   "keywords": [],
   "license": "Apache-2.0",
   "author": "",
@@ -25,11 +25,16 @@
     "knip": "knip",
     "codeql:local": "bash dev/codeql.sh",
     "test": "vitest run",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts e2e/core-loop.test.ts",
+    "test:e2e:smoke": "vitest run --config vitest.e2e.config.ts e2e/smoke.test.ts",
+    "test:e2e:web": "playwright test",
     "coverage": "vitest run --coverage",
     "coverage:watch": "vitest --coverage"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@trunkio/launcher": "^1.3.4",
+    "@types/node": "^22.18.0",
     "@typescript-eslint/eslint-plugin": "^8.59.1",
     "@typescript-eslint/parser": "^8.59.1",
     "@vitest/coverage-v8": "4.1.3",
