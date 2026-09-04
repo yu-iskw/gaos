@@ -19,7 +19,8 @@ async function signUp(page: Page): Promise<{ email: string; password: string }> 
   await page.getByRole('textbox', { name: 'email' }).fill(email);
   await page.getByRole('textbox', { name: 'password' }).fill(PASSWORD);
   await page.getByRole('button', { name: 'Sign up' }).click();
-  await expect(page.locator('#status')).toHaveText('signed in');
+  // Home after auth shows AppShell "signed in" (twice) plus Send — wait for Send.
+  await expect(page.getByRole('button', { name: 'Send' })).toBeVisible();
   return { email, password: PASSWORD };
 }
 
@@ -85,7 +86,7 @@ const SCENARIOS: PageScenario[] = [
       await page.getByRole('textbox', { name: 'email' }).fill(creds.email);
       await page.getByRole('textbox', { name: 'password' }).fill(creds.password);
       await page.getByRole('button', { name: 'Sign in' }).click();
-      await expect(page.locator('#status')).toHaveText('signed in');
+      await expect(page.getByRole('button', { name: 'Send' })).toBeVisible();
     },
     wait: { kind: 'role', role: 'button', name: 'Send' },
   },
