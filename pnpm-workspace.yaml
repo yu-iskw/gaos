@@ -25,6 +25,7 @@ minimumReleaseAgeExclude:
   - brace-expansion@5.0.9
   - nanoid@3.3.18
   - '@mastra/core'
+  - '@mastra/schema-compat'
 
 overrides:
   # GHSA-r292-9mhp-454m fixed in 7.5.21+
@@ -39,5 +40,5 @@ overrides:
   '@humanfs/node': 0.16.8
   # GHSA-w5hq-g745-h8pq (dockerode still pulls uuid@10)
   uuid: 11.1.1
-  # GHSA-866g-f22w-33x8 — OSV treats all 3.x as affected; pin past the fixed majors
+  # Keep Vertex / AI SDK on a single patched provider-utils line
   '@ai-sdk/provider-utils': 5.0.32
