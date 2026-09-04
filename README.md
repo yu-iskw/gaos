@@ -20,6 +20,18 @@ Open [http://127.0.0.1:5173](http://127.0.0.1:5173). Chat uses the fixture agent
 
 Stop the stack with `docker compose down`. Add `-v` to drop Postgres data.
 
+### Live Gemini on Vertex AI
+
+Application Default Credentials on the host, then the Vertex overlay. Default project is `ubie-yu-sandbox` and location is `global`.
+
+```bash
+gcloud auth application-default login
+gcloud auth application-default set-quota-project ubie-yu-sandbox
+docker compose -f compose.yaml -f compose.vertex.yaml up -d --build --wait
+```
+
+Open [http://127.0.0.1:5173](http://127.0.0.1:5173). Sign up, send a message. The agent host calls Gemini on Vertex (`GAOS_MODEL=google-vertex/gemini-2.5-flash`). Default `docker compose up` stays on the fixture so e2e does not need Vertex.
+
 ### Test against compose
 
 With the stack up:

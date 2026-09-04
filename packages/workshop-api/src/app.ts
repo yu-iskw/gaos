@@ -1,7 +1,9 @@
 import { createServer } from 'node:http';
 
 import { requestAgentTurn } from './agent-client';
+import { handleExtraAuthed, handleExtraPublic } from './extras-http';
 import { readJson, sendJson, stringField } from './http-util';
+import { assertIap, iapAudienceFromEnv, type IapVerifier } from './iap';
 import { ambientVendorsFromEnv, assertAmbientAllowed } from './minting';
 
 import type { GadgetHost } from './gadgets';
@@ -12,8 +14,10 @@ import type { IncomingMessage, Server as HttpServer, ServerResponse } from 'node
 export type AppConfig = {
   agentUrl: string;
   gadgets: GadgetHost;
+  iapAudience?: string;
   internalToken: string;
   store: Store;
+  verifyIap?: IapVerifier;
 };
 
 function cors(res: ServerResponse): void {
@@ -45,7 +49,7 @@ async function requireSession(req: IncomingMessage, store: Store): Promise<Sessi
 function previewHtml(files: Record<string, string>): string {
   const client = files['client.js'] ?? '';
   const escaped = client.replaceAll('</', '<\\/');
-  return `<!doctype html><iframe sandbox="allow-scripts" srcdoc="<script>${escaped}</script>"></iframe>`;
+  return `<!doctype html><script>${escaped}</script>`;
 }
 
 function filesFromBody(body: Record<string, unknown>): Record<string, string> {
@@ -92,6 +96,10 @@ async function handleChatGet(call: ChatCall): Promise<boolean> {
     sendJson(res, 200, state);
     return true;
   }
+  if (rest === '/messages') {
+    sendJson(res, 200, { messages: await config.store.listMessages(session, chatId) });
+    return true;
+  }
   if (rest === '/preview') {
     const state = await config.store.getState(session, chatId);
     const files = state.proposalFiles ?? state.acceptedFiles ?? {};
@@ -106,13 +114,20 @@ async function handleChatPost(call: ChatCall): Promise<boolean> {
   const { req, res, rest, session, chatId, config } = call;
   if (rest === '/messages') {
     const body = await readJson(req);
+    const text = stringField(body, 'text');
+    await config.store.appendMessage(chatId, 'user', text);
     const result = await requestAgentTurn({
       agentUrl: config.agentUrl,
       chatId,
       internalToken: config.internalToken,
-      message: stringField(body, 'text'),
+      message: text,
     });
+    await config.store.appendMessage(chatId, 'agent', result.text);
     sendJson(res, 200, result);
+    return true;
+  }
+  if (rest === '/share') {
+    sendJson(res, 200, await config.store.createShare(session, chatId));
     return true;
   }
   if (rest === '/accept') {
@@ -226,6 +241,9 @@ async function handleAuthed(
   config: AppConfig,
 ): Promise<void> {
   const session = await requireSession(req, config.store);
+  if (await handleExtraAuthed(req, res, path, session, config.store)) {
+    return;
+  }
   if (await handleWorkspaceRoutes(req, res, path, session, config)) {
     return;
   }
@@ -279,7 +297,7 @@ async function handlePublic(
     await handleInternalProposal(req, res, config);
     return true;
   }
-  return false;
+  return handleExtraPublic(req, res, path, config);
 }
 
 export function createApp(config: AppConfig): HttpServer {
@@ -292,13 +310,17 @@ export function createApp(config: AppConfig): HttpServer {
         return;
       }
       const path = new URL(req.url ?? '/', 'http://workshop.local').pathname;
+      const audience = config.iapAudience ?? iapAudienceFromEnv();
+      if (audience !== undefined) {
+        await assertIap(req, audience, config.verifyIap);
+      }
       const handled = await handlePublic(req, res, path, config);
       if (!handled) {
         await handleAuthed(req, res, path, config);
       }
     })().catch((err: unknown) => {
       const message = err instanceof Error ? err.message : 'error';
-      const status = message === 'unauthorized' ? 401 : 400;
+      const status = message === 'unauthorized' ? 401 : message === 'forbidden' ? 403 : 400;
       cors(res);
       sendJson(res, status, { error: message });
     });

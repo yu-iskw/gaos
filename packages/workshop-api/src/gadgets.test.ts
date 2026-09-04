@@ -5,6 +5,7 @@ import path from 'node:path';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { extraStubs } from './extras';
 import { createGadgetHost } from './gadgets';
 
 import type { Store } from './store';
@@ -12,6 +13,8 @@ import type { Sandbox } from '@gaos/sandbox';
 
 function fakeStore(): Store {
   return {
+    ...extraStubs(),
+    getConnector: () => Promise.resolve(undefined),
     accept: () => Promise.resolve('g1'),
     createChat: () => Promise.resolve('c1'),
     getState: () =>

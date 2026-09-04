@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createApp } from './app';
+import { extraStubs } from './extras';
 
 import type { GadgetHost } from './gadgets';
 import type { Session, Store } from './store';
@@ -30,6 +31,7 @@ function memoryStore(): Store {
   let gadgetId: string | null = null;
   let isolation: WorkshopState['gadgetIsolation'] = null;
   const store: Store = {
+    ...extraStubs(),
     signup(email) {
       const session = { token: `t-${email}`, userId: 'u1', workspaceId: 'w1' };
       sessions.set(session.token, session);
@@ -79,6 +81,13 @@ function memoryStore(): Store {
     },
     listConnectors() {
       return Promise.resolve([...connectors]);
+    },
+    getConnector(_session, id) {
+      const found = connectors.find((row) => row.id === id);
+      if (found === undefined) {
+        return Promise.resolve(undefined);
+      }
+      return Promise.resolve({ ...found, secret: null });
     },
     mintConnector(_session, input) {
       const connector = {
@@ -262,6 +271,103 @@ describe('createApp', () => {
         body: JSON.stringify({ text: 'write a gadget' }),
       });
       expect(message.status).toBe(200);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it('requires IAP assertion when audience is configured', async () => {
+    server = createApp({
+      store: memoryStore(),
+      agentUrl: 'http://agent-host:8081',
+      internalToken: 'tok',
+      gadgets: fakeGadgets(),
+      iapAudience: '/projects/1/iap',
+      verifyIap: () => Promise.resolve(),
+    });
+    const port = await listen(server);
+    const base = `http://127.0.0.1:${String(port)}`;
+    const denied = await fetch(`${base}/chats`, { method: 'POST' });
+    expect(denied.status).toBe(401);
+    const health = await fetch(`${base}/health`);
+    expect(health.status).toBe(200);
+    const allowed = await fetch(`${base}/health`, {
+      headers: { 'x-goog-iap-jwt-assertion': 'token' },
+    });
+    expect(allowed.status).toBe(200);
+  });
+
+  it('persists context, schedules, shares, and MCP invokes', async () => {
+    const store = memoryStore();
+    const session = await store.signup('a@b.c', 'secret');
+    const chatId = await store.createChat(session);
+    server = createApp({
+      store,
+      agentUrl: 'http://agent-host:8081',
+      internalToken: 'tok',
+      gadgets: fakeGadgets(),
+    });
+    const port = await listen(server);
+    const base = `http://127.0.0.1:${String(port)}`;
+    const auth = { authorization: `Bearer ${session.token}`, 'content-type': 'application/json' };
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = (input, init) => {
+      const url = input instanceof URL ? input.href : typeof input === 'string' ? input : '';
+      if (url.startsWith(base)) {
+        return originalFetch(input, init);
+      }
+      if (url.includes('/agent/turn')) {
+        return Promise.resolve(
+          new Response(JSON.stringify({ text: 'scheduled' }), { status: 200 }),
+        );
+      }
+      return Promise.resolve(new Response('{"jsonrpc":"2.0","result":[]}', { status: 200 }));
+    };
+    try {
+      const context = await fetch(`${base}/context`, {
+        method: 'POST',
+        headers: auth,
+        body: JSON.stringify({ title: 'note', body: 'hello' }),
+      });
+      expect(context.status).toBe(200);
+      const listed = await fetch(`${base}/context`, { headers: auth });
+      expect(((await listed.json()) as { docs: unknown[] }).docs).toHaveLength(1);
+
+      const schedule = await fetch(`${base}/schedules`, {
+        method: 'POST',
+        headers: auth,
+        body: JSON.stringify({ cron: '0 9 * * *', chatId, message: 'hi' }),
+      });
+      expect(schedule.status).toBe(200);
+      const row = (await schedule.json()) as { id: string };
+
+      const fire = await fetch(`${base}/internal/schedules/fire`, {
+        method: 'POST',
+        headers: { authorization: 'Bearer tok', 'content-type': 'application/json' },
+        body: JSON.stringify({ id: row.id }),
+      });
+      expect(fire.status).toBe(200);
+
+      const share = await fetch(`${base}/chats/${chatId}/share`, { method: 'POST', headers: auth });
+      const shared = (await share.json()) as { token: string };
+      const publicShare = await fetch(`${base}/shares/${shared.token}`);
+      expect(publicShare.status).toBe(200);
+
+      await store.mintConnector(session, {
+        vendor: 'mcp',
+        name: 'http://mcp.example/sse',
+        ambient: false,
+      });
+      const invoked = await fetch(`${base}/connectors/c1/invoke`, {
+        method: 'POST',
+        headers: auth,
+        body: JSON.stringify({ method: 'tools/list', params: {} }),
+      });
+      expect(invoked.status).toBe(200);
+      const me = await fetch(`${base}/me`, { headers: auth });
+      expect(((await me.json()) as { email: string }).email).toBe('a@b.c');
+      const admin = await fetch(`${base}/admin/config`, { headers: auth });
+      expect(admin.status).toBe(200);
     } finally {
       globalThis.fetch = originalFetch;
     }

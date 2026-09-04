@@ -10,10 +10,20 @@
     "dev": "vite"
   },
   "dependencies": {
-    "capnweb": "^0.12.0"
+    "@cloudflare/kumo": "2.12.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/react-router": "^1.170.32",
+    "capnweb": "^0.12.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@types/node": "^22.18.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "@vitejs/plugin-react": "^6.1.0",
     "typescript": "^5.9.3",
     "vite": "^8.0.16"
   }

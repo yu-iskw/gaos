@@ -11,8 +11,8 @@
       "project": ["src/**/*.ts"]
     },
     "packages/workshop-web": {
-      "entry": ["src/server.ts"],
-      "project": ["src/**/*.ts"]
+      "entry": ["src/server.ts", "src/main.tsx"],
+      "project": ["src/**/*.{ts,tsx}"]
     }
   }
 }

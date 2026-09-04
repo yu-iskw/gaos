@@ -66,7 +66,7 @@ describe('core loop', () => {
     expect(preview.headers.get('content-type')).toContain('text/html');
     const html = await preview.text();
     expect(html).toContain('hello from gadget');
-    expect(html).toContain('iframe');
+    expect(html).not.toContain('<iframe');
   });
 
   it('accept persists and revert drops the draft', async () => {

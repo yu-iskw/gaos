@@ -46,15 +46,7 @@ async function sendFromHome(page: Page): Promise<void> {
   await page.getByRole('textbox', { name: 'message' }).fill('write a gadget');
   await page.getByRole('button', { name: 'Send' }).click();
   await page.waitForURL(/\/workspace\//);
-  const accept = page.getByRole('button', { name: 'Accept' });
-  if (!(await accept.isVisible())) {
-    await page.getByRole('textbox', { name: 'message' }).fill('write a gadget');
-    await page.getByRole('button', { name: 'Send' }).click();
-    await expect(accept).toBeVisible({ timeout: 60_000 });
-  }
-  // Home Send can land before WorkspaceEditor binds the URL chat.
-  await page.reload();
-  await expect(accept).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole('button', { name: 'Accept' })).toBeVisible({ timeout: 60_000 });
 }
 
 const SCENARIOS: PageScenario[] = [

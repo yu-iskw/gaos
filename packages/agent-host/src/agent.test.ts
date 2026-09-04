@@ -29,6 +29,17 @@ describe('runTurn fixture', () => {
       globalThis.fetch = originalFetch;
     }
   });
+
+  it('refuses a live turn without GOOGLE_VERTEX_PROJECT', async () => {
+    process.env['GAOS_MODEL'] = 'google-vertex/gemini-2.5-flash';
+    delete process.env['GOOGLE_VERTEX_PROJECT'];
+    await expect(
+      runTurn(
+        { workshopUrl: 'http://workshop-api:8080', internalToken: 'tok' },
+        { chatId: 'c1', message: 'make a gadget' },
+      ),
+    ).rejects.toThrow('GOOGLE_VERTEX_PROJECT');
+  });
 });
 
 describe('postProposal', () => {

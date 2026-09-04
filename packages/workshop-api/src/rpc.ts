@@ -1,11 +1,13 @@
 import { newWebSocketRpcSession, RpcTarget } from 'capnweb';
 import { WebSocketServer } from 'ws';
 
-import { requestAgentTurn } from './agent-client';
+import { agentMessageFromUser, requestAgentTurn } from './agent-client';
+import { invokeMcp } from './mcp-invoke';
 import { ambientVendorsFromEnv, assertAmbientAllowed } from './minting';
 import { validateRpc } from './validate-rpc';
 
 import type { AppConfig } from './app';
+import type { AdminConfig } from './extras';
 import type { Session } from './store';
 import type { Server } from 'node:http';
 
@@ -39,8 +41,44 @@ class AuthenticatedApi extends RpcTarget {
     return this.#config.store.createChat(this.#session);
   }
 
+  public createSchedule(cron: string, chatId: string, message: string) {
+    return this.#config.store.createSchedule(this.#session, cron, chatId, message);
+  }
+
+  public createShare() {
+    return this.#config.store.createShare(this.#session, this.#chatId);
+  }
+
+  public getAdminConfig() {
+    return this.#config.store.getAdminConfig();
+  }
+
+  public getMessages() {
+    return this.#config.store.listMessages(this.#session, this.#chatId);
+  }
+
   public getState() {
     return this.#config.store.getState(this.#session, this.#chatId);
+  }
+
+  public getUserEmail() {
+    return this.#config.store.getUserEmail(this.#session);
+  }
+
+  public async invokeConnector(
+    connectorId: string,
+    method: string,
+    params: string,
+  ): Promise<string> {
+    const connector = await this.#config.store.getConnector(this.#session, connectorId);
+    if (connector === undefined) {
+      throw new Error('connector not found');
+    }
+    if (connector.vendor !== 'mcp') {
+      throw new Error('unsupported vendor');
+    }
+    const parsed: unknown = JSON.parse(params);
+    return invokeMcp(connector.name, method, parsed, connector.secret ?? undefined);
   }
 
   public listChats(): Promise<string[]> {
@@ -51,8 +89,16 @@ class AuthenticatedApi extends RpcTarget {
     return this.#config.store.listConnectors(this.#session);
   }
 
+  public listContext() {
+    return this.#config.store.listContext(this.#session);
+  }
+
   public listGadgets() {
     return this.#config.store.listGadgets(this.#session);
+  }
+
+  public listSchedules() {
+    return this.#config.store.listSchedules(this.#session);
   }
 
   public mintConnector(vendor: string, name: string, ambient: boolean) {
@@ -72,17 +118,33 @@ class AuthenticatedApi extends RpcTarget {
     return this.#config.store.revert(this.#session, this.#chatId);
   }
 
-  public async sendMessage(text: string): Promise<{ text: string }> {
-    return requestAgentTurn({
+  public async sendMessage(
+    text: string,
+    onChunk?: (chunk: string) => void,
+    previewError?: string,
+  ): Promise<{ text: string }> {
+    await this.#config.store.appendMessage(this.#chatId, 'user', text);
+    const result = await requestAgentTurn({
       agentUrl: this.#config.agentUrl,
       chatId: this.#chatId,
       internalToken: this.#config.internalToken,
-      message: text,
+      message: agentMessageFromUser(text, previewError),
+      onChunk,
     });
+    await this.#config.store.appendMessage(this.#chatId, 'agent', result.text);
+    return result;
   }
 
   public token(): string {
     return this.#session.token;
+  }
+
+  public updateAdminConfig(patch: AdminConfig) {
+    return this.#config.store.updateAdminConfig(this.#session, patch);
+  }
+
+  public writeContext(title: string, body: string) {
+    return this.#config.store.writeContext(this.#session, title, body);
   }
 }
 

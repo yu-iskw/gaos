@@ -1,4 +1,10 @@
-const FIXTURE_CLIENT_JS = "document.body.textContent = 'hello from gadget';\n";
+const FIXTURE_CLIENT_JS = `document.body.textContent = 'hello from gadget';
+gadget.fetch().then((res) => {
+  if (res && typeof res.body === 'string' && res.body.length > 0) {
+    document.body.textContent = res.body;
+  }
+});
+`;
 
 const FIXTURE_SERVER_JS = `'use strict';
 const fs = require('node:fs');

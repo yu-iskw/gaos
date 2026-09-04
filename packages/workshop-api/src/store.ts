@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { createExtraStore, type ExtraStore } from './extras';
 import { hashPassword, newToken, verifyPassword } from './passwords';
 
 import type { BindingMap, Connector, Gadget, GadgetRecord, WorkshopState } from './types';
@@ -17,9 +18,12 @@ export type MintConnectorInput = {
   vendor: string;
 };
 
-export type Store = {
+export type ConnectorInvoke = Connector & { secret: string | null };
+
+type CoreStore = {
   accept: (session: Session, chatId: string) => Promise<string>;
   createChat: (session: Session) => Promise<string>;
+  getConnector: (session: Session, connectorId: string) => Promise<ConnectorInvoke | undefined>;
   getGadget: (session: Session, gadgetId: string) => Promise<GadgetRecord | undefined>;
   getSession: (token: string) => Promise<Session | undefined>;
   getState: (session: Session, chatId: string) => Promise<WorkshopState>;
@@ -38,6 +42,8 @@ export type Store = {
   ) => Promise<void>;
 };
 
+export type Store = CoreStore & ExtraStore;
+
 function asBindings(value: unknown): BindingMap {
   if (typeof value !== 'object' || value === null) {
     return {};
@@ -52,6 +58,10 @@ function asBindings(value: unknown): BindingMap {
 }
 
 export function createStore(pool: Pool): Store {
+  return { ...createCoreStore(pool), ...createExtraStore(pool) };
+}
+
+function createCoreStore(pool: Pool): CoreStore {
   return {
     async signup(email, password) {
       const userId = randomUUID();
@@ -152,12 +162,23 @@ export function createStore(pool: Pool): Store {
       return result.rows;
     },
 
+    async getConnector(session, connectorId) {
+      const result = await pool.query<ConnectorInvoke>(
+        `SELECT id, workspace_id AS "workspaceId", vendor, name, ambient, secret
+         FROM connectors WHERE id = $1 AND workspace_id = $2`,
+        [connectorId, session.workspaceId],
+      );
+      return result.rows.at(0);
+    },
+
     async mintConnector(session, input) {
       const id = randomUUID();
+      const secretKey = `GAOS_CONNECTOR_SECRET_${input.vendor.toUpperCase()}`;
+      const secret = process.env[secretKey] ?? null;
       await pool.query(
-        `INSERT INTO connectors (id, workspace_id, vendor, name, ambient)
-         VALUES ($1, $2, $3, $4, $5)`,
-        [id, session.workspaceId, input.vendor, input.name, input.ambient],
+        `INSERT INTO connectors (id, workspace_id, vendor, name, ambient, secret)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [id, session.workspaceId, input.vendor, input.name, input.ambient, secret],
       );
       if (input.ambient) {
         await pool.query(

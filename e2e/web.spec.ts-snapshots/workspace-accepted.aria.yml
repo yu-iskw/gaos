@@ -8,8 +8,6 @@
 - complementary:
     - paragraph: write a gadget
     - paragraph: Proposed a gadget with client.js and server.js.
-    - paragraph: write a gadget
-    - paragraph: Proposed a gadget with client.js and server.js.
     - textbox "message"
     - paragraph: accepted
     - button "Send"

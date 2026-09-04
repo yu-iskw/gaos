@@ -14,5 +14,5 @@ export async function runTurn(
     return { text: 'Proposed a gadget with client.js and server.js.' };
   }
   const { streamTurn } = await import('./mastra-agent');
-  return streamTurn(config, input.message);
+  return streamTurn(config, input);
 }

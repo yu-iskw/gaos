@@ -13,6 +13,7 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
+    "@ai-sdk/google-vertex": "5.0.67",
     "@mastra/core": "1.63.0",
     "zod": "^4.1.5"
   },

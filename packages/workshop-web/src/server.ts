@@ -13,6 +13,7 @@ const types: Record<string, string> = {
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
 };
 
 function send(res: http.ServerResponse, status: number, type: string, body: string | Buffer): void {
@@ -25,18 +26,24 @@ const server = http.createServer((req, res) => {
     send(res, 200, 'application/json', JSON.stringify({ ok: true, service: 'workshop-web' }));
     return;
   }
-  const urlPath =
+  const rawPath =
     req.url === undefined || req.url === '/'
       ? '/index.html'
       : (req.url.split('?')[0] ?? '/index.html');
-  const file = path.normalize(path.join(dist, urlPath));
+  const file = path.normalize(path.join(dist, rawPath));
   if (!file.startsWith(dist)) {
     send(res, 403, 'text/plain', 'forbidden');
     return;
   }
   fs.readFile(file, (err, data) => {
     if (err) {
-      send(res, 404, 'text/plain', 'not found');
+      fs.readFile(path.join(dist, 'index.html'), (fallbackErr, html) => {
+        if (fallbackErr) {
+          send(res, 404, 'text/plain', 'not found');
+          return;
+        }
+        send(res, 200, types['.html'] ?? 'text/html; charset=utf-8', html);
+      });
       return;
     }
     const ext = path.extname(file);
