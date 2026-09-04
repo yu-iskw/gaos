@@ -33,3 +33,11 @@ overrides:
   # GHSA-2v37-7h3g-55p8 fixed in the 3.x line in 3.3.18+
   nanoid: 3.3.18
   tar: 7.5.22
+  # GHSA-73wf-gq98-2v4g / GHSA-c83g-rgw3-j3cx
+  browserslist: 4.28.8
+  # GHSA-p498-v437-472g
+  '@humanfs/node': 0.16.8
+  # GHSA-w5hq-g745-h8pq (dockerode still pulls uuid@10)
+  uuid: 11.1.1
+  # GHSA-866g-f22w-33x8 — OSV treats all 3.x as affected; pin past the fixed majors
+  '@ai-sdk/provider-utils': 5.0.32

@@ -15,4 +15,11 @@ FROM node:22-slim
 WORKDIR /app
 COPY --from=build /app /app
 ENV NODE_ENV=production
+RUN groupadd --system --gid 1001 gaos \
+  && useradd --system --uid 1001 --gid gaos --create-home gaos \
+  && chown -R gaos:gaos /app
+USER gaos
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD ["node", "-e", "fetch('http://127.0.0.1:'+(process.env.PORT||'8080')+'/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
 CMD ["node", "packages/workshop-api/dist/server.js"]
